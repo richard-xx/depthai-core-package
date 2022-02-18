@@ -30,7 +30,7 @@ index 4a41f873..03bc6cc5 100644
 +    if(${CMAKE_VERSION} VERSION_GREATER "3.6")
 +        if(DEFINED ENV{SHARED})
 +            set(CPACK_DEBIAN_FILE_NAME
-+                "${PROJECT_NAME}_${PROJECT_VERSION}_${CMAKE_SYSTEM_PROCESSOR}_$ENV{SHARED}"
++                "${PROJECT_NAME}_${PROJECT_VERSION}_${CMAKE_SYSTEM_PROCESSOR}_$ENV{SHARED}.deb"
 +            )
 +        else()
 +            set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
