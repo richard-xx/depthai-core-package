@@ -26,7 +26,7 @@ jobs:
     # Run steps on a matrix of 3 arch/distro combinations
     strategy:
       matrix:
-        arch: [linux/amd64,linux/arm/v7,linux/arm64/v8]
+        arch: [amd64,arm,arm64]
         distro: ["ubuntu:18.04"]
         shared: [Shared, Static]
             
@@ -47,7 +47,7 @@ jobs:
           platforms: all # optional, default is all
 
       - name: build
-        run: docker run -i --rm --platform ${{ matrix.arch }} -e SHARED=${{ matrix.shared }} -v `pwd`:/workdir ${{ matrix.distro }} bash /workdir/build_on_docker.sh
+        run: docker run -i --rm --platform linux/${{ matrix.arch }} -e SHARED=${{ matrix.shared }} -v `pwd`:/workdir ${{ matrix.distro }} bash /workdir/build_on_docker.sh
       
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v2
@@ -63,5 +63,4 @@ jobs:
         with:
           files: |
             artifacts/*.deb
-            LICENSE
 
