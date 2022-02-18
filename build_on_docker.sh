@@ -1,7 +1,7 @@
 echo "Install some dependencies in the container."
 export TZ='Asia/Shanghai'
 ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-apt update -qq && apt install -q -y dialog apt-utils && apt install -q -y curl wget git build-essential libusb-1.0-0-dev cmake clang-format 
+apt update -qq && apt install -q -y dialog apt-utils && apt install -q -y curl wget git build-essential libusb-1.0-0-dev cmake clang-format libopencv-dev
 if [ ${SHARED} = "Static" ]
 then
     apt install -q -y libopencv-dev
