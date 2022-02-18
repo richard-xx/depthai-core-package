@@ -1,0 +1,67 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+permissions:
+  contents: write
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.shared }}
+
+    # Run steps on a matrix of 3 arch/distro combinations
+    strategy:
+      matrix:
+        arch: [linux/amd64,linux/arm/v7,linux/arm64/v8]
+        distro: ["ubuntu:18.04"]
+        shared: [Shared, Static]
+            
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v2
+
+      - name: Docker Setup QEMU
+        # You may pin to the exact commit or the version.
+        # uses: docker/setup-qemu-action@27d0a4f181a40b142cce983c5393082c365d1480
+        uses: docker/setup-qemu-action@v1
+        with:
+          # QEMU static binaries Docker image (e.g. tonistiigi/binfmt:latest)
+          image: tonistiigi/binfmt:latest # optional, default is tonistiigi/binfmt:latest
+          # Platforms to install (e.g. arm64,riscv64,arm)
+          platforms: all # optional, default is all
+
+      - name: build
+        run: docker run -i --rm --platform ${{ matrix.arch }} -e SHARED=${{ matrix.shared }} -v `pwd`:/workdir ${{ matrix.distro }} bash /workdir/build_on_docker.sh
+      
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          # Artifact name
+          name: ${{ matrix.arch }}_${{ matrix.shared }} # optional, default is artifact
+          # A file, directory or wildcard pattern that describes what to upload
+          path: artifacts
+          
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            artifacts/*.deb
+            LICENSE
+
