@@ -1,0 +1,97 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4a41f873..03bc6cc5 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -214,7 +214,7 @@ add_library("${PROJECT_NAME}::${TARGET_CORE_ALIAS}" ALIAS ${TARGET_CORE_NAME})
+ # Specify that we are building core
+ target_compile_definitions(${TARGET_CORE_NAME} PUBLIC DEPTHAI_TARGET_CORE)
+ # Specifies name of generated IMPORTED target (set to alias)
+-set_target_properties(${TARGET_CORE_NAME} PROPERTIES EXPORT_NAME ${TARGET_CORE_ALIAS})
++set_target_properties(${TARGET_CORE_NAME} PROPERTIES EXPORT_NAME ${TARGET_CORE_ALIAS} SOVERSION ${PROJECT_VERSION_MAJOR})
+ # Add to list of targets to export and install
+ list(APPEND targets_to_export ${TARGET_CORE_NAME})
+ 
+@@ -620,3 +620,83 @@ if(DEPTHAI_HAVE_OPENCV_SUPPORT)
+         $<$<BOOL:${tmp_includes}>:\n-I\'$<JOIN:${tmp_includes},\'\n-I\'>\'>\n"
+     )
+ endif()
++
++# Package
++if(NOT WIN32)
++    # VERSION_LESS VERSION_EQUAL VERSION_GREATER
++    if(${CMAKE_VERSION} VERSION_GREATER "3.18")
++        set(CPACK_ARCHIVE_THREADS "0")
++    endif()
++
++    # https://cmake.org/cmake/help/latest/cpack_gen/deb.html
++    if(${CMAKE_VERSION} VERSION_GREATER "3.1")
++        set(CPACK_DEBIAN_COMPRESSION_TYPE "xz")
++    endif()
++    if(${CMAKE_VERSION} VERSION_GREATER "3.6")
++        if(DEFINED ENV{SHARED})
++            set(CPACK_DEBIAN_FILE_NAME
++                "${PROJECT_NAME}_${PROJECT_VERSION}_${CMAKE_SYSTEM_PROCESSOR}_$ENV{SHARED}"
++            )
++        else()
++            set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
++        endif()
++    endif()
++    # set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
++    #     "${CMAKE_CURRENT_SOURCE_DIR}/scripts/preinst"
++    #     "${CMAKE_CURRENT_SOURCE_DIR}/scripts/prerm"
++    #     "${CMAKE_CURRENT_SOURCE_DIR}/scripts/postinst"
++    #     "${CMAKE_CURRENT_SOURCE_DIR}/scripts/postrm")
++    if(${CMAKE_VERSION} VERSION_GREATER "3.4")
++        set(CPACK_DEBIAN_PACKAGE_CONTROL_STRICT_PERMISSION "TRUE")
++    endif()
++
++    # set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
++    # set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS "ON")
++    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/luxonis/depthai-core")
++    set(CPACK_DEBIAN_PACKAGE_PREDEPENDS "libusb-1.0-0-dev")
++    set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "build-essential, libopencv-dev")
++    if(${CMAKE_VERSION} VERSION_GREATER "3.13")
++        set(CPACK_DEBIAN_RUNTIME_DEBUGINFO_PACKAGE "ON")
++    endif()
++
++    set(CPACK_GENERATOR "TXZ;DEB")
++    set(CPACK_IGNORE_FILES
++        ${PROJECT_SOURCE_DIR}/build
++        ${PROJECT_SOURCE_DIR}/.idea
++        ${PROJECT_SOURCE_DIR}/.DS_Store
++        ${PROJECT_SOURCE_DIR}/.git
++        ${PROJECT_SOURCE_DIR}/.gitignore
++        ${PROJECT_SOURCE_DIR}/.vscode
++        ${PROJECT_SOURCE_DIR}/.swp$
++        ${PROJECT_SOURCE_DIR}/.svn
++        ${PROJECT_SOURCE_DIR}/CVS
++        ${PROJECT_SOURCE_DIR}/.tar.*$)
++    set(CPACK_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
++
++    set(CPACK_PACKAGE_CONTACT "Richard <richard@arducam.com>")
++    # set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
++    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "DepthAI C++ Library")
++    if(DEFINED ENV{SHARED})
++        set(CPACK_PACKAGE_FILE_NAME
++            "${PROJECT_NAME}-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}-$ENV{SHARED}"
++        )
++    else()
++        set(CPACK_PACKAGE_FILE_NAME
++            "${PROJECT_NAME}-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}"
++        )
++    endif()
++    set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
++    set(CPACK_PACKAGE_VENDOR "Luxonis")
++    set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
++    set(CPACK_PACKAGE_VERSION_MAJOR "${CMAKE_PROJECT_VERSION_MAJOR}")
++    set(CPACK_PACKAGE_VERSION_MINOR "${CMAKE_PROJECT_VERSION_MINOR}")
++    set(CPACK_PACKAGE_VERSION_PATCH "${CMAKE_PROJECT_VERSION_PATCH}")
++    set(CPACK_SOURCE_GENERATOR "TXZ")
++
++    set(CPACK_SOURCE_IGNORE_FILES ${CPACK_IGNORE_FILES})
++    if(${CMAKE_VERSION} VERSION_GREATER "3.20")
++        set(CPACK_THREADS "0")
++    endif()
++    # set(CPACK_VERBATIM_VARIABLES "TRUE")
++    include(CPack)
++endif()
