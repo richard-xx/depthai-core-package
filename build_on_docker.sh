@@ -10,7 +10,7 @@ mkdir -p /workdir/artifacts
 
 echo "Apply the patch"
 git clone --recursive https://github.com/luxonis/depthai-core.git --branch main /workdir/depthai-core \
-cd /workdir/depthai-core \
+&& cd /workdir/depthai-core \
 && git apply /workdir/depthai-core-package.patch
 # && cat Cpack.txt >> CMakeLists.txt
 
