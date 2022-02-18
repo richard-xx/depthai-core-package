@@ -19,15 +19,15 @@ if [ ${SHARED} = "Static" ]
 then
     echo "Build"
     cd /workdir \
-    && cmake -S . -Bbuild -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
+    && cmake -S depthai-core -Bdepthai-core/build -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
     && cmake --build build --config Release --target package -- -j4
 else
     echo "Build"
     cd /workdir \
-    && cmake -S . -Bbuild -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
+    && cmake -S depthai-core -Bdepthai-core/build -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
     && cmake --build build --config Release --target package -- -j4
 fi
 
-chown -R 1000:1000 /workdir/build/* \
-    && cp /workdir/build/*.deb /workdir/artifacts/ \
-    && cp /workdir/build/*.xz /workdir/artifacts
+chown -R 1000:1000 /workdir/depthai-core/build/* \
+    && cp /workdir/depthai-core/build/*.deb /workdir/artifacts/ \
+    && cp /workdir/depthai-core/build/*.xz /workdir/artifacts
