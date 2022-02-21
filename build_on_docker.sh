@@ -4,10 +4,10 @@ ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 apt update -qq && apt install -q -y dialog apt-utils && apt install -q -y curl wget git build-essential libusb-1.0-0-dev cmake clang-format
 if [ ${SHARED} = "Static" ]
 then
+    apt-get install -q -y libopencv-dev
     echo "deb https://ppa.launchpadcontent.net/savoury1/graphics/ubuntu bionic main" > /etc/apt/sources.list.d/savoury1-graphics.list
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 374c7797fb006459 
-    apt update -qq && apt install -q -y libopencv-dev
-fi
+    apt update -qq && apt-get upgrade -q -y 
 mkdir -p /workdir/artifacts 
 
 echo "Apply the patch"
