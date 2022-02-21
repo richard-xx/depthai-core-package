@@ -2,15 +2,6 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 4a41f873..03bc6cc5 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -214,7 +214,7 @@ add_library("${PROJECT_NAME}::${TARGET_CORE_ALIAS}" ALIAS ${TARGET_CORE_NAME})
- # Specify that we are building core
- target_compile_definitions(${TARGET_CORE_NAME} PUBLIC DEPTHAI_TARGET_CORE)
- # Specifies name of generated IMPORTED target (set to alias)
--set_target_properties(${TARGET_CORE_NAME} PROPERTIES EXPORT_NAME ${TARGET_CORE_ALIAS})
-+set_target_properties(${TARGET_CORE_NAME} PROPERTIES EXPORT_NAME ${TARGET_CORE_ALIAS} SOVERSION ${PROJECT_VERSION_MAJOR})
- # Add to list of targets to export and install
- list(APPEND targets_to_export ${TARGET_CORE_NAME})
- 
 @@ -620,3 +620,83 @@ if(DEPTHAI_HAVE_OPENCV_SUPPORT)
          $<$<BOOL:${tmp_includes}>:\n-I\'$<JOIN:${tmp_includes},\'\n-I\'>\'>\n"
      )

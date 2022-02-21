@@ -1,10 +1,12 @@
 echo "Install some dependencies in the container."
 export TZ='Asia/Shanghai'
 ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-apt update -qq && apt install -q -y dialog apt-utils && apt install -q -y curl wget git build-essential libusb-1.0-0-dev cmake clang-format libopencv-dev
+apt update -qq && apt install -q -y dialog apt-utils && apt install -q -y curl wget git build-essential libusb-1.0-0-dev cmake clang-format
 if [ ${SHARED} = "Static" ]
 then
-    apt install -q -y libopencv-dev
+    echo "deb https://ppa.launchpadcontent.net/savoury1/graphics/ubuntu bionic main" > /etc/apt/sources.list.d/savoury1-graphics.list
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 374c7797fb006459 
+    apt update -qq && apt install -q -y libopencv-dev
 fi
 mkdir -p /workdir/artifacts 
 
@@ -20,12 +22,12 @@ then
     echo "Build"
     cd /workdir \
     && cmake -S depthai-core -Bdepthai-core/build -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
-    && cmake --build depthai-core/build --config Release --target package -- -j4
+    && cmake --build depthai-core/build --config Release --target package -- -j
 else
     echo "Build"
     cd /workdir \
     && cmake -S depthai-core -Bdepthai-core/build -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
-    && cmake --build depthai-core/build --config Release --target package -- -j4
+    && cmake --build depthai-core/build --config Release --target package -- -j
 fi
 
 chown -R 1000:1000 /workdir/depthai-core/build/* \
