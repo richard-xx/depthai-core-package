@@ -8,6 +8,7 @@ then
     echo "deb https://ppa.launchpadcontent.net/savoury1/graphics/ubuntu bionic main" > /etc/apt/sources.list.d/savoury1-graphics.list
     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 374c7797fb006459 
     apt update -qq && apt-get upgrade -y 
+fi
 mkdir -p /workdir/artifacts 
 
 echo "Apply the patch"
