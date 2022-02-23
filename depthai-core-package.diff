@@ -57,7 +57,7 @@ index 4a41f873..03bc6cc5 100644
 +        ${PROJECT_SOURCE_DIR}/.svn
 +        ${PROJECT_SOURCE_DIR}/CVS
 +        ${PROJECT_SOURCE_DIR}/.tar.*$)
-+    set(CPACK_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
++    set(CPACK_INSTALL_PREFIX "/usr/local")
 +
 +    set(CPACK_PACKAGE_CONTACT "Richard <richard@arducam.com>")
 +    # set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")

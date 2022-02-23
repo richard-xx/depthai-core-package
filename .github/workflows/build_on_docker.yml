@@ -28,7 +28,8 @@ jobs:
       matrix:
         arch: [amd64,arm,arm64]
         distro: ["ubuntu:18.04"]
-        shared: [Shared, Static]
+        #shared: [Shared, Static]
+        shared: [Shared]
             
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
