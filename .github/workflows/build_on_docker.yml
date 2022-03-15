@@ -1,14 +1,16 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Build debs
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - v* 
+    paths:
+      - 'build_on_docker.sh'
+      - 'depthai-core-package.diff'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -21,15 +23,12 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.shared }}
-
+    name: Build on ${{ matrix.distro }} 
     # Run steps on a matrix of 3 arch/distro combinations
     strategy:
       matrix:
         arch: [amd64,arm,arm64]
         distro: ["ubuntu:18.04"]
-        #shared: [Shared, Static]
-        shared: [Shared]
             
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -48,10 +47,10 @@ jobs:
           platforms: all # optional, default is all
 
       - name: build
-        run: docker run -i --rm --platform linux/${{ matrix.arch }} -e SHARED=${{ matrix.shared }} -v `pwd`:/workdir ${{ matrix.distro }} bash /workdir/build_on_docker.sh
+        run: docker run -i --rm --platform linux/${{ matrix.arch }} -v `pwd`:/workdir ghcr.io/richard-xx/opencv_core_imgproc bash /workdir/build_on_docker.sh
       
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           # Artifact name
           name: ${{ matrix.arch }}_${{ matrix.shared }} # optional, default is artifact

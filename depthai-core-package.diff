@@ -1,8 +1,8 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 4a41f873..03bc6cc5 100644
+index 4a41f873..213eefa5 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -620,3 +620,83 @@ if(DEPTHAI_HAVE_OPENCV_SUPPORT)
+@@ -620,3 +620,76 @@ if(DEPTHAI_HAVE_OPENCV_SUPPORT)
          $<$<BOOL:${tmp_includes}>:\n-I\'$<JOIN:${tmp_includes},\'\n-I\'>\'>\n"
      )
  endif()
@@ -19,13 +19,9 @@ index 4a41f873..03bc6cc5 100644
 +        set(CPACK_DEBIAN_COMPRESSION_TYPE "xz")
 +    endif()
 +    if(${CMAKE_VERSION} VERSION_GREATER "3.6")
-+        if(DEFINED ENV{SHARED})
-+            set(CPACK_DEBIAN_FILE_NAME
-+                "${PROJECT_NAME}_${PROJECT_VERSION}_${CMAKE_SYSTEM_PROCESSOR}_$ENV{SHARED}.deb"
-+            )
-+        else()
-+            set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
-+        endif()
++        set(CPACK_DEBIAN_FILE_NAME
++            "${PROJECT_NAME}_${PROJECT_VERSION}_${CMAKE_SYSTEM_PROCESSOR}.deb"
++        )
 +    endif()
 +    # set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA
 +    #     "${CMAKE_CURRENT_SOURCE_DIR}/scripts/preinst"
@@ -39,8 +35,9 @@ index 4a41f873..03bc6cc5 100644
 +    # set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE ${CMAKE_SYSTEM_PROCESSOR})
 +    # set(CPACK_DEBIAN_PACKAGE_GENERATE_SHLIBS "ON")
 +    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/luxonis/depthai-core")
-+    set(CPACK_DEBIAN_PACKAGE_PREDEPENDS "libusb-1.0-0-dev")
-+    set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "build-essential, libopencv-dev")
++    set(CPACK_DEBIAN_PACKAGE_PREDEPENDS "udev")
++    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libusb-1.0-0-dev")
++    set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "build-essential")
 +    if(${CMAKE_VERSION} VERSION_GREATER "3.13")
 +        set(CPACK_DEBIAN_RUNTIME_DEBUGINFO_PACKAGE "ON")
 +    endif()
@@ -62,15 +59,10 @@ index 4a41f873..03bc6cc5 100644
 +    set(CPACK_PACKAGE_CONTACT "Richard <richard@arducam.com>")
 +    # set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 +    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "DepthAI C++ Library")
-+    if(DEFINED ENV{SHARED})
-+        set(CPACK_PACKAGE_FILE_NAME
-+            "${PROJECT_NAME}-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}-$ENV{SHARED}"
-+        )
-+    else()
-+        set(CPACK_PACKAGE_FILE_NAME
-+            "${PROJECT_NAME}-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}"
-+        )
-+    endif()
++    set(CPACK_PACKAGE_FILE_NAME
++        "${PROJECT_NAME}-${PROJECT_VERSION}-${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}"
++    )
++    set(CPACK_PACKAGING_INSTALL_PREFIX "${CPACK_INSTALL_PREFIX}")
 +    set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
 +    set(CPACK_PACKAGE_VENDOR "Luxonis")
 +    set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
@@ -80,6 +72,7 @@ index 4a41f873..03bc6cc5 100644
 +    set(CPACK_SOURCE_GENERATOR "TXZ")
 +
 +    set(CPACK_SOURCE_IGNORE_FILES ${CPACK_IGNORE_FILES})
++    set(CPACK_STRIP_FILES "TRUE")
 +    if(${CMAKE_VERSION} VERSION_GREATER "3.20")
 +        set(CPACK_THREADS "0")
 +    endif()

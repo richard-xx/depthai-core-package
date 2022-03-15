@@ -1,36 +1,18 @@
-echo "Install some dependencies in the container."
-export TZ='Asia/Shanghai'
-ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-apt update -qq && apt install -q -y dialog apt-utils && apt install -q -y curl wget git build-essential libusb-1.0-0-dev cmake clang-format
-if [ ${SHARED} = "Static" ]
-then
-    apt-get install -q -y libopencv-dev
-    echo "deb https://ppa.launchpadcontent.net/savoury1/graphics/ubuntu bionic main" > /etc/apt/sources.list.d/savoury1-graphics.list
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 374c7797fb006459 
-    apt update -qq && apt-get upgrade -y 
-fi
-mkdir -p /workdir/artifacts 
-
 echo "Apply the patch"
-git clone --recursive https://github.com/luxonis/depthai-core.git --branch main /workdir/depthai-core \
+git clone --recursive https://github.com/luxonis/depthai-core.git --depth 1 --shallow-submodules --branch v2.15.0 /workdir/depthai-core \
 && cd /workdir/depthai-core \
 && git apply /workdir/depthai-core-package.diff
-# && cat Cpack.txt >> CMakeLists.txt
 
+echo "Build"
+cd /workdir \
+&& env CC=clang-10 CXX=clang++-10 LD=ld.lld-10 \
+cmake -S depthai-core \
+-B depthai-core/build \
+-DBUILD_SHARED_LIBS=ON \
+-DCMAKE_BUILD_TYPE=Release \
+-DCMAKE_INSTALL_PREFIX=/usr/local \
+&& cmake --build depthai-core/build --config Release --target package -- -j
 
-if [ ${SHARED} = "Static" ]
-then
-    echo "Build"
-    cd /workdir \
-    && cmake -S depthai-core -Bdepthai-core/build -DBUILD_SHARED_LIBS=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
-    && cmake --build depthai-core/build --config Release --target package -- -j
-else
-    echo "Build"
-    cd /workdir \
-    && cmake -S depthai-core -Bdepthai-core/build -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
-    && cmake --build depthai-core/build --config Release --target package -- -j
-fi
-
-chown -R 1000:1000 /workdir/depthai-core/build/* \
-&& cp /workdir/depthai-core/build/*.deb /workdir/artifacts/ \
-&& cp /workdir/depthai-core/build/*.xz /workdir/artifacts
+mkdir -p /workdir/artifacts
+cp /workdir/depthai-core/build/*.deb /workdir/artifacts/ \
+&& cp /workdir/depthai-core/build/*.xz /workdir/artifacts/
