@@ -8,7 +8,7 @@ RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && sed -i "s@http://.*.ubuntu.com@http://mirrors.ustc.edu.cn@g" /etc/apt/sources.list \
     && apt update -qq \
     && apt install --no-install-recommends -qq -y apt-utils dialog \
-    && apt install --no-install-recommends -qq -y curl wget git build-essential gnupg \
+    && apt install --no-install-recommends -qq -y curl wget git build-essential \
     libusb-1.0-0-dev cmake ca-certificates ccache pkg-config python3-distutils \
     clang-10 llvm-10 lldb-10 lld-10 clang-format-10 \
     && if [[ "$(uname -m)" =~ *86* ]]; then \
