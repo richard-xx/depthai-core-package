@@ -3,7 +3,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ='Asia/Shanghai'
 SHELL ["/bin/bash","-c"]
 
-# sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
 # sed -i "s@http://.*.ubuntu.com@http://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
 RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
     && sed -i "s@http://.*.ubuntu.com@http://mirrors.ustc.edu.cn@g" /etc/apt/sources.list \
